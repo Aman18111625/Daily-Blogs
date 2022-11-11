@@ -1,7 +1,6 @@
-
 <%- include("partials/header"); -%>
-
-    <h1>Home</h1>
+    <h1>Welcome to Daily-Blogs</h1>
+    <h3>Here you will find all the past <strong>Blogs</strong></h3>
     <p> <%= startingContent %> </p>
 
 
@@ -10,11 +9,8 @@
     <h1><%=post.title%></h1>
     <p>
     <%=post.content.substring(0, 100) + " ..."%>
-    <a href="/posts/<%=post._id%>">Read More</a>
+    <a href="/posts/<%=post.title%>">Read More</a>
     </p>
 
 
     <% }) %>
-
-
-<%- include("partials/footer"); -%>
