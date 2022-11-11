@@ -1,10 +1,30 @@
 require("dotenv").config();
 const express = require("express");
-const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const cookieparser = require("cookie-parser");
+const helmet = require("helmet");
+const path = require("path");
+const { LocalStorage } = require("node-localstorage");
+
+const app = express();
+
+app.use(helmet());
+app.use(cookieparser());
+
+app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+//connection to mongoDB
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }, () => {
+  console.log("db connected");
+});
+
 
 const homeStartingContent =
   "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -12,19 +32,6 @@ const aboutContent =
   "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
 const contactContent =
   "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
-
-const app = express();
-
-app.set("view engine", "ejs");
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static("public"));
-
-//connection to mongoDB
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }, () => {
-  console.log("db connected");
-});
 
 //user schema
 const userSchema = mongoose.Schema({
@@ -40,6 +47,8 @@ const postSchema = {
   content: String,
 };
 const Post = mongoose.model("Post", postSchema);
+
+var localStorage = new LocalStorage("./scratch");
 
 app.get("/", function (req, res) {
   res.render("register");
@@ -67,8 +76,9 @@ app.post("/register", async (req, res) => {
       });
       // console.log("Registration Successfull")
       user.save();
+
       Post.find({}, function (err, posts) {
-          res.render("home", {
+        res.render("home", {
           startingContent: homeStartingContent,
           posts: posts,
         });
@@ -98,8 +108,10 @@ app.post("/login", async (req, res) => {
         console.log("Invalid Credentials");
         res.render("login");
       } else {
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
         Post.find({}, function (err, posts) {
-            res.render("home", {
+          res.render("home", {
             startingContent: homeStartingContent,
             posts: posts,
           });
@@ -113,34 +125,51 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/logout", async (req, res) => {
-  res.logout();
+  localStorage.clear();
   res.render("login");
 });
 
-app.get("/home", function (req, res) {
-  Post.find({}, function (err, posts) {
+app.get("/home", async function (req, res) {
+  const email = localStorage.getItem("email");
+  console.log(email);
+
+  if (email == null) {
+    console.log("Please Log-in first");
+    res.render("login");
+  } else {
+    Post.find({}, function (err, posts) {
+      console.log("Authorization successful");
       res.render("home", {
-      startingContent: homeStartingContent,
-      posts: posts,
+        startingContent: homeStartingContent,
+        posts: posts,
+      });
     });
-  });
+  }
 });
 
 app.get("/compose", function (req, res) {
-   res.render("compose");
+  res.render("compose");
 });
 
 app.post("/compose", function (req, res) {
-  const post = new Post({
-    title: req.body.postTitle,
-    content: req.body.postBody,
-  });
+  const email = localStorage.getItem("email");
+  console.log(email);
 
-  post.save(function (err) {
-    if (!err) {
-      res.redirect("/home");
-    }
-  });
+  if (email == null) {
+    console.log("Please Log-in first");
+    res.render("login");
+  } else {
+    const post = new Post({
+      title: req.body.postTitle,
+      content: req.body.postBody,
+    });
+
+    post.save(function (err) {
+      if (!err) {
+        res.redirect("/home");
+      }
+    });
+  }
 });
 
 app.get("/posts/:postTitle", function (req, res) {
@@ -150,7 +179,7 @@ app.get("/posts/:postTitle", function (req, res) {
     if (err) {
       console.log(err);
     } else {
-        res.render("post", {
+      res.render("post", {
         title: post.title,
         content: post.content,
       });
@@ -159,11 +188,11 @@ app.get("/posts/:postTitle", function (req, res) {
 });
 
 app.get("/about", function (req, res) {
-   res.render("about", { aboutContent: aboutContent });
+  res.render("about", { aboutContent: aboutContent });
 });
 
 app.get("/contact", function (req, res) {
-   res.render("contact", { contactContent: contactContent });
+  res.render("contact", { contactContent: contactContent });
 });
 
 app.listen(process.env.PORT, function () {
