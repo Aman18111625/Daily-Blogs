@@ -7,6 +7,7 @@ const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const path = require("path");
 const { LocalStorage } = require("node-localstorage");
+const e = require("express");
 
 const app = express();
 
@@ -24,7 +25,6 @@ app.set("views", path.join(__dirname, "views"));
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }, () => {
   console.log("db connected");
 });
-
 
 const homeStartingContent =
   "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -126,16 +126,16 @@ app.post("/login", async (req, res) => {
 
 app.get("/logout", async (req, res) => {
   localStorage.clear();
-  res.render("login");
+  res.redirect("/login");
 });
 
 app.get("/home", async function (req, res) {
   const email = localStorage.getItem("email");
   console.log(email);
 
-  if (email == null) {
+  if (email === null) {
     console.log("Please Log-in first");
-    res.render("login");
+    res.redirect("/login");
   } else {
     Post.find({}, function (err, posts) {
       console.log("Authorization successful");
@@ -148,43 +148,53 @@ app.get("/home", async function (req, res) {
 });
 
 app.get("/compose", function (req, res) {
-  res.render("compose");
-});
-
-app.post("/compose", function (req, res) {
   const email = localStorage.getItem("email");
   console.log(email);
 
-  if (email == null) {
+  if (email === null) {
     console.log("Please Log-in first");
-    res.render("login");
-  } else {
+    res.redirect("/login");
+  }
+  else{
+    res.render("compose");
+  }
+});
+
+app.post("/compose", function (req, res) {
     const post = new Post({
       title: req.body.postTitle,
       content: req.body.postBody,
     });
 
     post.save(function (err) {
-      if (!err) {
+      if (err){
+        res.redirect("/compose");
+      }else{
         res.redirect("/home");
       }
     });
-  }
 });
 
 app.get("/posts/:postTitle", function (req, res) {
-  const requestedPostTitle = req.params.postTitle;
+  const email=localStorage.getItem("email");
 
-  Post.findOne({ title: requestedPostTitle }, function (err, post) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("post", {
-        title: post.title,
-        content: post.content,
-      });
-    }
-  });
+  if(email === null){
+    console.log("please login first");
+    res.redirect("/login");
+  }else{
+    const requestedPostTitle = req.params.postTitle;
+
+    Post.findOne({ title: requestedPostTitle }, function (err, post) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("post", {
+          title: post.title,
+          content: post.content,
+        });
+      }
+    });
+  }
 });
 
 app.get("/about", function (req, res) {
