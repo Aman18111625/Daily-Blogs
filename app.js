@@ -21,7 +21,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 //connection to mongoDB
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }, () => {
+mongoose.connect("mongodb+srv://guptaji997:aman18111625@cluster0.qhsowva.mongodb.net/Daily-Blogs?retryWrites=true&w=majority", { useNewUrlParser: true }, () => {
   console.log("db connected");
 });
 
@@ -219,6 +219,8 @@ app.get("/contact", async (req, res) => {
   });
 });
 
-app.listen(process.env.PORT, async () => {
+const port = 3000;
+
+app.listen(3000, async () => {
   console.log("Server started on port 3000");
 });
