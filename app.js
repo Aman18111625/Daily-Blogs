@@ -167,7 +167,7 @@ app.get("/compose", function (req, res) {
     console.log("Please Log-in first");
     res.redirect("/login");
   } else {
-    res.render("compose");
+    res.render("compose",{userLogged:userLogged});
   }
 });
 
@@ -179,9 +179,9 @@ app.post("/compose", async (req, res) => {
 
   await post.save((err) => {
     if (err){
-      res.redirect("/compose");
+      res.render("compose",{userLogged:userLogged});
     }else{
-      res.render("home",{userLogged:userLogged});
+      res.redirect("/home");
     }
   });
 });
