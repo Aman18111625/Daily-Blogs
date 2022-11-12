@@ -1,7 +1,8 @@
-<%- include("partials/header"); -%>
+<%- include("partials/header")-%>
     <h1>Welcome to Daily-Blogs</h1>
     <h3>Here you will find all the past <strong>Blogs</strong></h3>
     <p> <%= startingContent %> </p>
+    <p> <% console.log(userLogged) %></p>
 
 
   <%  posts.forEach(function(post){ %>
@@ -14,3 +15,5 @@
 
 
     <% }) %>
+
+    <%- include("partials/footer"); -%>
