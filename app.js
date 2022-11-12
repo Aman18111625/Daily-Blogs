@@ -7,7 +7,6 @@ const cookieparser = require("cookie-parser");
 const helmet = require("helmet");
 const path = require("path");
 const { LocalStorage } = require("node-localstorage");
-const e = require("express");
 
 const app = express();
 
