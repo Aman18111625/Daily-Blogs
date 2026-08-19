@@ -1,27 +1,36 @@
 {
   "name": "daily-blogs",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A simple blogging website where users can create, read, update, and delete blog posts. Built with Node.js, Express.js, and MongoDB along with SSR using EJS.",
+  "keywords": [
+    "blogs",
+    "node.js",
+    "express.js",
+    "mongoDB"
+  ],
+  "homepage": "https://github.com/Aman18111625/Daily-Blogs#readme",
+  "bugs": {
+    "url": "https://github.com/Aman18111625/Daily-Blogs/issues"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aman18111625/Daily-Blogs.git"
+  },
   "license": "ISC",
-  "engines": {
-    "node": "16.13.2"
+  "author": "Aman Gupta",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
-    "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.3",
-    "ejs": "^2.6.1",
-    "express": "^4.16.3",
-    "helmet": "^6.0.0",
-    "lodash": "^4.17.11",
-    "mongoose": "^5.3.6",
-    "node-localstorage": "^2.2.1",
-    "nodemon": "^2.0.20",
-    "path": "^0.12.7"
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.9.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

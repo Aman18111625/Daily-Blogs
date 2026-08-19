@@ -2,24 +2,14 @@
 <html lang="en">
   <head>
     <%- include('./partials/head') %>
-    <title>Daily Blogs - SignUp</title>
+    <title>Daily Blogs - SignIn</title>
   </head>
 
   <body>
     <%- include('./partials/nav') %>
     <div class="container mt-4">
-      <form action="/user/signup" method="post">
+      <form action="/user/signin" method="post">
         <div class="mb-3">
-          <label for="exampleInputFullName1" class="form-label"
-            >Full Name</label
-          >
-          <input
-            type="text"
-            name="fullName"
-            class="form-control"
-            id="exampleInputFullName1"
-            aria-describedby="fullNmaeHelp"
-          />
           <label for="exampleInputFullName1" class="form-label"
             >Email address</label
           >
@@ -30,9 +20,6 @@
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
           />
-          <div id="emailHelp" class="form-text">
-            We'll never share your email with anyone else.
-          </div>
         </div>
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">Password</label>
@@ -43,7 +30,7 @@
             id="exampleInputPassword1"
           />
         </div>
-        <button type="submit" class="btn btn-primary">SignUp</button>
+        <button type="submit" class="btn btn-primary">SignIn</button>
       </form>
     </div>
     <%- include('./partials/script') %>
