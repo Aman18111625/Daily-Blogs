@@ -1,6 +1,10 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const secret = process.env.SECRET || 'aman12414';
+const secret = process.env.SECRET;
+
+if (!secret) {
+    throw new Error("JWT_SECRET is required");
+}
 
 function createTokenForUser(user) {
     const payload = {
@@ -10,7 +14,7 @@ function createTokenForUser(user) {
         profileImageUrl: user.profileImageUrl,
         role: user.role
     }
-    const token = jwt.sign(payload, secret);
+    const token = jwt.sign(payload, secret, { expiresIn: "7d" });
     return token;
 }
 

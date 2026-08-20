@@ -15,7 +15,7 @@ function checkForAuthenticationCookie(cookieName) {
       );
       req.user = user || undefined;
     } catch (error) {
-      console.log(error);
+      res.clearCookie(cookieName);
     }
     next();
   };

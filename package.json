@@ -21,6 +21,7 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
+    "test": "node --check app.js && node --check routes/blog.js && node --check routes/user.js && node --check middlewares/authentication.js && node --check services/auth.js",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },

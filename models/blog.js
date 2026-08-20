@@ -5,10 +5,13 @@ const blogSchema = new Schema(
     title: {
       type: String,
       required: true,
+      trim: true,
+      maxlength: 200,
     },
     body: {
       type: String,
       required: true,
+      maxlength: 100000,
     },
     coverImageUrl: {
       type: String,
@@ -16,6 +19,7 @@ const blogSchema = new Schema(
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "user",
+      required: true,
     },
   },
   { timestamps: true },

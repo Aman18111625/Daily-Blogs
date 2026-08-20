@@ -5,6 +5,8 @@ const commentSchema = Schema(
     content: {
       type: String,
       required: true,
+      trim: true,
+      maxlength: 2000,
     },
     createdBy: {
       type: Schema.Types.ObjectId,
@@ -14,6 +16,7 @@ const commentSchema = Schema(
     blogId: {
       type: Schema.Types.ObjectId,
       ref: "blog",
+      required: true,
     },
   },
   { timestamps: true },
