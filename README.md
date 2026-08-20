@@ -37,3 +37,7 @@ Use MongoDB Atlas or another hosted MongoDB service. The application writes uplo
 - Use a long random `SECRET` in production.
 - Uploaded files are limited to images up to 5 MB.
 - Authentication cookies are HTTP-only and secure in production.
+
+## Live Link: 
+
+https://daily-blogs-oteo.onrender.com/
